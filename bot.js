@@ -5,7 +5,9 @@ if(process.env.NODE_ENV === 'production') {
     bot = new TeleBot({
         token: token,
         webhook: {
-            url: process.env.HEROKU_URL + token
+            url: process.env.HEROKU_URL + token,
+            host: '0.0.0.0', // Webhook server host.
+            port: 443 // Server port.
         }
     });
 }
