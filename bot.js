@@ -1,22 +1,11 @@
 const TeleBot = require("telebot");
 var token = process.env.TOKEN;
-var bot;
-if(process.env.NODE_ENV === 'production') {
-    bot = new TeleBot({
-        token: token,
-        webhook: {
-            port: process.env.port // Server port.
-        }
-    });
-}
-else {
-    bot = new TeleBot({
-        token: token,
-        polling: true 
-    });
-}
 
-console.log('bot server started...');
+var bot = new TeleBot({
+    token: token,
+    polling: true 
+});
+
 
 bot.on(['/hello', '/start'], async (msg) => {
     if(msg.text.toLowerCase() == '/hello' || msg.text.toLowerCase() == '/hello@any_animebot' || msg.text.toLowerCase() == '/start' || msg.text.toLowerCase() == '/start@any_animebot')
@@ -26,4 +15,4 @@ bot.on(['/hello', '/start'], async (msg) => {
     }
 });
 
-module.exports = bot;
+console.log('Listening...');
