@@ -2,7 +2,6 @@ const TeleBot = require("telebot");
 var token = process.env.TOKEN;
 var bot;
 if(process.env.NODE_ENV === 'production') {
-    console.log("in production")
     bot = new TeleBot({
         token: token,
         webhook: {

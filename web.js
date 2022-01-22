@@ -12,11 +12,9 @@ var server = app.listen(process.env.port || 5000, async ()=>{
     console.log('Web server started at http://%s:%s', host, port);
 });
 
-module.exports = function (bot) {
-  app.post('/webhook/' + process.env.TOKEN, function (req, res) {
+app.post('/webhook/' + process.env.TOKEN, function (req, res) {
     console.log(req.body);
 
     
     res.sendStatus(200);
-  });
-};
+});
