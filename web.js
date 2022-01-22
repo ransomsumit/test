@@ -14,7 +14,6 @@ var server = app.listen(process.env.port || 5000, async ()=>{
 
 app.post('/webhook/' + process.env.TOKEN, function (req, res) {
     console.log(req.body);
-
-    
+    res.json({ version: packageInfo.version });
     res.sendStatus(200);
 });
