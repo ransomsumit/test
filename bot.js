@@ -16,3 +16,4 @@ bot.on(['/hello', '/start'], async (msg) => {
 });
 
 console.log('Listening...');
+bot.polling()
