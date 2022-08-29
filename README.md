@@ -17,7 +17,7 @@ Sample files to run a Telegram Bot with Heroku without [dyno sleeping](https://b
 
 Make sure to run `npm install` before commiting your bot to Heroku.
 
-----
+---
 
 ## Prevent Dyno sleeping
 
