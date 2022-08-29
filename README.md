@@ -13,7 +13,7 @@ Sample files to run a Telegram Bot with Heroku without [dyno sleeping](https://b
 * [Heroku NodeJS Documentation](https://devcenter.heroku.com/articles/getting-started-with-nodejs#introduction)
 * [telebot](https://www.npmjs.com/package/telebot)
 
----branch1 test
+---
 
 Make sure to run `npm install` before commiting your bot to Heroku.
 
