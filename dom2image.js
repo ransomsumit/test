@@ -77,6 +77,7 @@
                 Object.keys(options.style).forEach(function (property) {
                     clone.style[property] = options.style[property];
                 });
+            console.log(clone.style);
 
             return clone;
         }
