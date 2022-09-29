@@ -230,6 +230,7 @@
 
             function cloneStyle() {
                 copyStyle(window.getComputedStyle(original), clone.style);
+                copyStyle(window.parent.getComputedStyle(original), clone.style);
                 console.log(window.getComputedStyle(original));
 
                 function copyStyle(source, target) {
