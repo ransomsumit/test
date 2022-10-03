@@ -68,6 +68,7 @@
             });
 
         function applyOptions(clone) {
+            console.log(clone)
             if (options.bgcolor) clone.style.backgroundColor = options.bgcolor;
 
             if (options.width) clone.style.width = options.width + 'px';
