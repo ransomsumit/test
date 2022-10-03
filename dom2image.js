@@ -68,7 +68,6 @@
             });
 
         function applyOptions(clone) {
-            console.log(clone)
             if (options.bgcolor) clone.style.backgroundColor = options.bgcolor;
 
             if (options.width) clone.style.width = options.width + 'px';
@@ -181,6 +180,7 @@
         return Promise.resolve(node)
             .then(makeNodeCopy)
             .then(function (clone) {
+                console.log(clone);
                 return cloneChildren(node, clone, filter);
             })
             .then(function (clone) {
