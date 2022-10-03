@@ -229,7 +229,7 @@
                 });
 
             function cloneStyle() {
-                copyStyle(window.getComputedStyle(original), clone.style);
+                copyStyle(window.getDefaultComputedStyle(original), clone.style);
 
                 function copyStyle(source, target) {
                     if (source.cssText) target.cssText = source.cssText;
