@@ -14,6 +14,15 @@
         cacheBust: false
     };
 
+    // Iframe Chrome Vars
+    var Element = window.Element;
+    var HTMLCanvasElement = window.HTMLCanvasElement;
+    var HTMLTextAreaElement = window.HTMLTextAreaElement;
+    var HTMLInputElement = window.HTMLInputElement;
+    var SVGElement = window.SVGElement;
+    var SVGRectElement = window.SVGRectElement;
+    var HTMLImageElement = window.HTMLImageElement;
+
     var domtoimage = {
         toSvg: toSvg,
         toPng: toPng,
@@ -50,12 +59,25 @@
      * @param {Boolean} options.cacheBust - set to true to cache bust by appending the time to the request url
      * @return {Promise} - A promise that is fulfilled with a SVG image data URL
      * */
+
+    function fixIframe(ifm)
+    {
+        Element = ifm.contentWindow.Element;
+        HTMLCanvasElement = ifm.contentWindow.HTMLCanvasElement;
+        HTMLTextAreaElement = ifm.contentWindow.HTMLTextAreaElement;
+        HTMLInputElement = ifm.contentWindow.HTMLInputElement;
+        SVGElement = ifm.contentWindow.SVGElement;
+        SVGRectElement = ifm.contentWindow.SVGRectElement;
+        HTMLImageElement = ifm.contentWindow.HTMLImageElement;
+    }
+
     function toSvg(node, options, ifm = false) {
+        if(ifm) fixIframe(ifm);
         options = options || {};
         copyOptions(options);
         return Promise.resolve(node)
             .then(function (node) {
-                return cloneNode(node, options.filter, true, ifm);
+                return cloneNode(node, options.filter, true);
             })
             .then(embedFonts)
             .then(inlineImages)
@@ -88,7 +110,8 @@
      * @return {Promise} - A promise that is fulfilled with a Uint8Array containing RGBA pixel data.
      * */
     function toPixelData(node, options, ifm = false) {
-        return draw(node, options || {}, ifm)
+        if(ifm) fixIframe(ifm);
+        return draw(node, options || {})
             .then(function (canvas) {
                 return canvas.getContext('2d').getImageData(
                     0,
@@ -105,7 +128,8 @@
      * @return {Promise} - A promise that is fulfilled with a PNG image data URL
      * */
     function toPng(node, options, ifm = false) {
-        return draw(node, options || {}, ifm)
+        if(ifm) fixIframe(ifm);
+        return draw(node, options || {})
             .then(function (canvas) {
                 return canvas.toDataURL();
             });
@@ -118,7 +142,8 @@
      * */
     function toJpeg(node, options, ifm = false) {
         options = options || {};
-        return draw(node, options, ifm)
+        if(ifm) fixIframe(ifm);
+        return draw(node, options)
             .then(function (canvas) {
                 return canvas.toDataURL('image/jpeg', options.quality || 1.0);
             });
@@ -130,7 +155,8 @@
      * @return {Promise} - A promise that is fulfilled with a PNG image blob
      * */
     function toBlob(node, options, ifm = false) {
-        return draw(node, options || {}, ifm)
+        if(ifm) fixIframe(ifm);
+        return draw(node, options || {})
             .then(util.canvasToBlob);
     }
 
@@ -149,8 +175,8 @@
         }
     }
 
-    function draw(domNode, options, ifm) {
-        return toSvg(domNode, options, ifm)
+    function draw(domNode, options) {
+        return toSvg(domNode, options)
             .then(util.makeImage)
             .then(util.delay(100))
             .then(function (image) {
@@ -174,7 +200,7 @@
         }
     }
 
-    function cloneNode(node, filter, root, ifm) {
+    function cloneNode(node, filter, root) {
         if (!root && filter && !filter(node)) return Promise.resolve();
 
         return Promise.resolve(node)
@@ -183,7 +209,7 @@
                 return cloneChildren(node, clone, filter);
             })
             .then(function (clone) {
-                return processClone(node, clone, ifm);
+                return processClone(node, clone);
             });
 
         function makeNodeCopy(node) {
@@ -205,7 +231,7 @@
                 children.forEach(function (child) {
                     done = done
                         .then(function () {
-                            return cloneNode(child, filter, false, ifm);
+                            return cloneNode(child, filter);
                         })
                         .then(function (childClone) {
                             if (childClone) parent.appendChild(childClone);
@@ -215,12 +241,8 @@
             }
         }
 
-        function processClone(original, clone, ifm) {
-            if (ifm)
-            {
-                if(!(clone instanceof ifm.contentWindow.Element)) return clone;   
-            }
-            else if (!(clone instanceof Element)) return clone;
+        function processClone(original, clone) {
+            if (!(clone instanceof Element)) return clone;
 
             return Promise.resolve()
                 .then(cloneStyle)
