@@ -205,7 +205,7 @@
                 children.forEach(function (child) {
                     done = done
                         .then(function () {
-                            return cloneNode(child, filter);
+                            return cloneNode(child, filter, false, ifm);
                         })
                         .then(function (childClone) {
                             if (childClone) parent.appendChild(childClone);
