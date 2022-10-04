@@ -242,7 +242,7 @@
         }
 
         function processClone(original, clone) {
-            if (!(clone instanceof Element)) return clone;
+            if ((clone instanceof Element) == false && (clone instanceof window.Element) == false) return clone;
 
             return Promise.resolve()
                 .then(cloneStyle)
