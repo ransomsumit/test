@@ -50,12 +50,12 @@
      * @param {Boolean} options.cacheBust - set to true to cache bust by appending the time to the request url
      * @return {Promise} - A promise that is fulfilled with a SVG image data URL
      * */
-    function toSvg(node, options) {
+    function toSvg(node, options, ifm = false) {
         options = options || {};
         copyOptions(options);
         return Promise.resolve(node)
             .then(function (node) {
-                return cloneNode(node, options.filter, true);
+                return cloneNode(node, options.filter, true, ifm);
             })
             .then(embedFonts)
             .then(inlineImages)
@@ -87,8 +87,8 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a Uint8Array containing RGBA pixel data.
      * */
-    function toPixelData(node, options) {
-        return draw(node, options || {})
+    function toPixelData(node, options, ifm = false) {
+        return draw(node, options || {}, ifm)
             .then(function (canvas) {
                 return canvas.getContext('2d').getImageData(
                     0,
@@ -104,8 +104,8 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a PNG image data URL
      * */
-    function toPng(node, options) {
-        return draw(node, options || {})
+    function toPng(node, options, ifm = false) {
+        return draw(node, options || {}, ifm)
             .then(function (canvas) {
                 return canvas.toDataURL();
             });
@@ -116,9 +116,9 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a JPEG image data URL
      * */
-    function toJpeg(node, options) {
+    function toJpeg(node, options, ifm = false) {
         options = options || {};
-        return draw(node, options)
+        return draw(node, options, ifm)
             .then(function (canvas) {
                 return canvas.toDataURL('image/jpeg', options.quality || 1.0);
             });
@@ -129,8 +129,8 @@
      * @param {Object} options - Rendering options, @see {@link toSvg}
      * @return {Promise} - A promise that is fulfilled with a PNG image blob
      * */
-    function toBlob(node, options) {
-        return draw(node, options || {})
+    function toBlob(node, options, ifm = false) {
+        return draw(node, options || {}, ifm)
             .then(util.canvasToBlob);
     }
 
@@ -149,8 +149,8 @@
         }
     }
 
-    function draw(domNode, options) {
-        return toSvg(domNode, options)
+    function draw(domNode, options, ifm) {
+        return toSvg(domNode, options, ifm)
             .then(util.makeImage)
             .then(util.delay(100))
             .then(function (image) {
@@ -174,17 +174,16 @@
         }
     }
 
-    function cloneNode(node, filter, root) {
+    function cloneNode(node, filter, root, ifm) {
         if (!root && filter && !filter(node)) return Promise.resolve();
 
         return Promise.resolve(node)
             .then(makeNodeCopy)
             .then(function (clone) {
-                console.log(clone);
                 return cloneChildren(node, clone, filter);
             })
             .then(function (clone) {
-                return processClone(node, clone);
+                return processClone(node, clone, ifm);
             });
 
         function makeNodeCopy(node) {
@@ -216,8 +215,12 @@
             }
         }
 
-        function processClone(original, clone) {
-            if (!(clone instanceof Element)) return clone;
+        function processClone(original, clone, ifm) {
+            if (ifm)
+            {
+                if(!(clone instanceof ifm.contentWindow.Element)) return clone;   
+            }
+            else if (!(clone instanceof Element)) return clone;
 
             return Promise.resolve()
                 .then(cloneStyle)
